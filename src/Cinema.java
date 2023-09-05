@@ -1,94 +1,57 @@
-
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class Cinema {
-    public static Scanner scanner = new Scanner(System.in);
+    private final int FRONT_ROW_PRICE = 10;
+    private final int BACK_ROW_PRICE = 8;
+    private final int TOTAL_NUM_OF_ROWS;
+    private final int TOTAL_SEATS_PER_ROW;
+    private final int TOTAL_NUM_SEATS;
 
-    public static void main(String[] args) {
-        char[][] seatingScheme = createSeatingScheme();
-        boolean exit = false;
+    private final char[][] seatingScheme;
 
-        while (!exit) {
-            System.out.println("\n1. Show the seats\n" +
-                    "2. Buy a ticket\n" +
-                    "3. Statistics\n" +
-                    "0. Exit");
-            int choice = scanner.nextInt();
-            switch (choice) {
-                case 1:
-                    printSeatingScheme(seatingScheme);
-                    break;
-                case 2:
-                    purchaseTicket(seatingScheme);
-                    break;
-                case 3:
-                    printStatistics(seatingScheme);
-                    break;
-                case 0:
-                    exit = true;
-                    break;
-                default:
-                    System.out.println("invalid option");
-                    break;
-            }
-        }
+
+    public Cinema(int numRows, int numSeats) {
+        this.seatingScheme = createSeatingScheme(numRows, numSeats);
+        this.TOTAL_NUM_OF_ROWS = numRows;
+        this.TOTAL_SEATS_PER_ROW = numSeats;
+        this.TOTAL_NUM_SEATS = numRows * numSeats;
     }
 
-    public static void purchaseTicket(char[][] seatingScheme) {
-        boolean validSeat = false;
-        int rowNum = 0;
-        int seatNum = 0;
-
-        while (!validSeat) {
-            System.out.println("\nEnter a row number:");
-            rowNum = scanner.nextInt();
-            System.out.println("enter a seat Number in that row:");
-            seatNum = scanner.nextInt();
-            validSeat = isValidSeat(seatingScheme, rowNum, seatNum);
-        }
-        int ticketPrice = checkTicketPrice(seatingScheme, rowNum);
-        System.out.printf("\nTicket price: $%d\n", ticketPrice);
-        seatingScheme[rowNum - 1][seatNum - 1] = 'B';
-    }
-
-    public static boolean isValidSeat(char[][] seatingScheme, int rowNum, int seatNum) {
-        if (rowNum < 1 || rowNum > seatingScheme.length ||
-                seatNum < 1 || seatNum > seatingScheme[0].length) {
-            System.out.println("Wrong input!");
-            return false;
-        } else if (seatingScheme[rowNum - 1][seatNum - 1] == 'B') {
-            System.out.println("That ticket has already been purchased!");
-            return false;
+    public int purchaseTicket(int rowNum, int seatNum) {
+        if (isValidSeatNum(rowNum, seatNum) && isAvailableSeat(rowNum, seatNum)) {
+            rowNum--; // subtract 1 to match array indexes
+            seatNum--; // subtract 1 to match array indexes
+            seatingScheme[rowNum][seatNum] = 'B';
+            return checkTicketPrice(rowNum);
         } else {
-            return true;
+            return -1;
         }
     }
 
-    public static char[][] createSeatingScheme() {
-        boolean validInput = false;
-        int numRows = 0;
-        int numSeatsInRow = 0;
+    public boolean isValidSeatNum(int rowNum, int seatNum) {
+        rowNum--; // subtract 1 to match array indexes
+        seatNum--; // subtract 1 to match array indexes
+        return rowNum >= 0 &&
+                rowNum < seatingScheme.length &&
+                seatNum >= 0 &&
+                seatNum < seatingScheme[0].length;
+    }
 
-        while (!validInput) {
-            System.out.println("Enter the number of rows:");
-            numRows = scanner.nextInt();
-            System.out.println("Enter the number of seats in each row:");
-            numSeatsInRow = scanner.nextInt();
-            if (numRows > 0 && numSeatsInRow > 0) {
-                validInput = true;
-            } else {
-                System.out.println("Invalid input!");
-            }
-        }
-        char[][] seatingScheme = new char[numRows][numSeatsInRow];
+    public boolean isAvailableSeat(int rowNum, int seatNum) {
+        rowNum--; // subtract 1 to match array indexes
+        seatNum--; // subtract 1 to match array indexes
+        return seatingScheme[rowNum][seatNum] == 'S';
+    }
+
+    private char[][] createSeatingScheme(int numRows, int numSeatsPerRow) {
+        char[][] seatingScheme = new char[numRows][numSeatsPerRow];
         for (char[] chars : seatingScheme) {
             Arrays.fill(chars, 'S');
         }
         return seatingScheme;
     }
 
-    public static void printSeatingScheme(char[][] seatingScheme) {
+    public void printSeatingChart() {
         System.out.print("\nCinema:\n  ");
         for (int i = 1; i <= seatingScheme[0].length; i++) {
             System.out.printf("%d ", i);
@@ -104,29 +67,20 @@ public class Cinema {
         }
     }
 
-    public static int calculateMaxIncome(char[][] seatingScheme) {
-        int frontRowPrice = 10;
-        int backRowPrice = 8;
-        int numRows = seatingScheme.length;
-        int numSeatsPerRow = seatingScheme[0].length;
-        int totalNumSeats = numRows * numSeatsPerRow;
+    public int calculateMaxIncome() {
         int totalIncome;
-        if (totalNumSeats <= 60) {
-            totalIncome = totalNumSeats * frontRowPrice;
+        if (TOTAL_NUM_SEATS <= 60) {
+            totalIncome = TOTAL_NUM_SEATS * FRONT_ROW_PRICE;
         } else {
-            int totalNumFrontRowS = numRows / 2;
-            int totalNumBackRows = totalNumFrontRowS + numRows % 2;
-            totalIncome = totalNumFrontRowS * numSeatsPerRow * frontRowPrice
-                    + totalNumBackRows * numSeatsPerRow * backRowPrice;
+            int totalNumFrontRowS = TOTAL_NUM_OF_ROWS / 2;
+            int totalNumBackRows = totalNumFrontRowS + TOTAL_NUM_OF_ROWS % 2;
+            totalIncome = totalNumFrontRowS * TOTAL_SEATS_PER_ROW * FRONT_ROW_PRICE
+                    + totalNumBackRows * TOTAL_SEATS_PER_ROW * BACK_ROW_PRICE;
         }
         return totalIncome;
     }
 
-    public static int checkTicketPrice(char[][] seatingScheme, int rowNum) {
-        final int FRONT_ROW_PRICE = 10;
-        final int BACK_ROW_PRICE = 8;
-        final int TOTAL_NUM_OF_ROWS = seatingScheme.length;
-        final int TOTAL_SEATS_PER_ROW = seatingScheme[0].length;
+    public int checkTicketPrice(int rowNum) {
         if (TOTAL_NUM_OF_ROWS * TOTAL_SEATS_PER_ROW <= 60) {
             return FRONT_ROW_PRICE;
         } else {
@@ -139,23 +93,28 @@ public class Cinema {
         }
     }
 
-    public static void printStatistics(char[][] seatingScheme) {
-        int totalNumSeats = seatingScheme.length * seatingScheme[0].length;
+    public void printStatistics() {
         int numPurchasedTickets = 0;
         int currentIncome = 0;
-        int maxIncome = calculateMaxIncome(seatingScheme);
+        int maxIncome = calculateMaxIncome();
         for (int i = 0; i < seatingScheme.length; i++) {
             for (int j = 0; j < seatingScheme[i].length; j++) {
                 if (seatingScheme[i][j] == 'B') {
                     numPurchasedTickets++;
-                    currentIncome += checkTicketPrice(seatingScheme, i + 1);
+                    currentIncome += checkTicketPrice(i + 1);
                 }
             }
         }
-        double percentagePurchasedTickets = (double)numPurchasedTickets / (double)totalNumSeats * 100;
-        System.out.printf("\nNumber of purchased tickets: %d\n" +
-                        "Percentage: %.2f%%\nCurrent income: $%d\nTotal income: $%d\n", numPurchasedTickets,
+        double percentagePurchasedTickets = (double)numPurchasedTickets / (double)TOTAL_NUM_SEATS * 100;
+        System.out.printf("""
+
+                        Number of purchased tickets: %d
+                        Percentage: %.2f%%
+                        Current income: $%d
+                        Total income: $%d
+                        """, numPurchasedTickets,
                 percentagePurchasedTickets, currentIncome, maxIncome);
 
     }
 }
+

@@ -59,7 +59,7 @@ Run app from Intellij Idea after cloning or...
 * Change to directory - CinemaRoomManager\src\main\java\org\example
 * Compile code - javac *.java
 * Change directory to java - CinemaRoomManager\src\main\java
-* Run app - java org.example.Cinema
+* Run app - java org.example.Main
 
 ## Sources
 
