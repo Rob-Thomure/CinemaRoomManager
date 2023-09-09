@@ -26,6 +26,16 @@ public class Main {
         }
     }
 
+    /**
+     * purchase a ticket from the cinema object
+     * asks for row and seat number input from command prompt
+     * if the row and seat number selected are not within range of available seats
+     *      prints: Wrong input!
+     * if the row and seat number are not available due to already purchased
+     *      prints: That ticket has already been purchased!
+     * if seat is available
+     *      prints: Ticket price
+     */
     public static void purchaseTicket() {
         boolean validSeat = false;
         int rowNum = 0;
@@ -50,6 +60,12 @@ public class Main {
         System.out.printf("\nTicket price: $%d\n", ticketPrice);
     }
 
+    /**
+     * creates Cinema object
+     *      asks for number of rows and seats input from command line
+     *      the number of rows and seats are used to build the seating chart in Cinema object
+     * @return Cinema object
+     */
     public static Cinema createCinema() {
         boolean validInput = false;
         int numRows = 0;

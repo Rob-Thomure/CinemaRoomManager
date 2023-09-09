@@ -17,6 +17,12 @@ public class Cinema {
         this.TOTAL_NUM_SEATS = numRows * numSeats;
     }
 
+    /** sets the value of an element in seatingScheme(2d char array) to the value = B for bought
+     *
+     * @param rowNum row number of seat to be bought
+     * @param seatNum seat number in the row to be bought
+     * @return returns the price of seat bought or if seat is an invalid selection or already bought returns -1
+     */
     public int purchaseTicket(int rowNum, int seatNum) {
         if (isValidSeatNum(rowNum, seatNum) && isAvailableSeat(rowNum, seatNum)) {
             rowNum--; // subtract 1 to match array indexes
@@ -28,6 +34,12 @@ public class Cinema {
         }
     }
 
+    /**
+     * checks if row number and seat number are within range of valid row and seat numbers
+     * @param rowNum row number of seat
+     * @param seatNum seat number within a row
+     * @return true if rowNum and seatNum are within range of valid row and seat numbers
+     */
     public boolean isValidSeatNum(int rowNum, int seatNum) {
         rowNum--; // subtract 1 to match array indexes
         seatNum--; // subtract 1 to match array indexes
@@ -37,12 +49,24 @@ public class Cinema {
                 seatNum < seatingScheme[0].length;
     }
 
+    /**
+     * checks if row and seat number have not been purchased
+     * @param rowNum row number of seat
+     * @param seatNum seat number within row
+     * @return true if rowNum and seatNum have not been marked as bought
+     */
     public boolean isAvailableSeat(int rowNum, int seatNum) {
         rowNum--; // subtract 1 to match array indexes
         seatNum--; // subtract 1 to match array indexes
         return seatingScheme[rowNum][seatNum] == 'S';
     }
 
+    /**
+     * creates a seating chart for the cinema room representing available seats value S
+     * @param numRows number of rows within the cinema room
+     * @param numSeatsPerRow number of seats in a row in the cinema room
+     * @return 2d char array representing seating chart with values S for available seat
+     */
     private char[][] createSeatingScheme(int numRows, int numSeatsPerRow) {
         char[][] seatingScheme = new char[numRows][numSeatsPerRow];
         for (char[] chars : seatingScheme) {
@@ -51,6 +75,11 @@ public class Cinema {
         return seatingScheme;
     }
 
+    /**
+     * prints a 2d view of the seats in the cinema room
+     * value S = available seat
+     * value B = bought seat
+     */
     public void printSeatingChart() {
         System.out.print("\nCinema:\n  ");
         for (int i = 1; i <= seatingScheme[0].length; i++) {
@@ -67,6 +96,13 @@ public class Cinema {
         }
     }
 
+    /**
+     * calculates the max earnings the cinema room can earn
+     * if the total number of seats are 60 or less price is calculated based on front row seat prices
+     * if the total number of seats are greater than 60, one half of the rows are calculated at the front row prices
+     *      and the other half of the rows (plus 1 if odd number rows) are calculated using back row prices
+     * @return int value of the calculated maximum amount the cinema room can earn
+     */
     public int calculateMaxIncome() {
         int totalIncome;
         if (TOTAL_NUM_SEATS <= 60) {
@@ -80,6 +116,14 @@ public class Cinema {
         return totalIncome;
     }
 
+    /**
+     * calculate the price of ticket for a seat
+     * if the number of seats are 60 or less the price is based on price of a front row seat
+     * if the number of seats are greater than 60, lower half of the rows are based on front row price
+     *      and the other half(plus 1 row if odd number of rows) are based on back row price
+     * @param rowNum the row number of seat to be purchased
+     * @return int value of ticket price
+     */
     public int checkTicketPrice(int rowNum) {
         if (TOTAL_NUM_OF_ROWS * TOTAL_SEATS_PER_ROW <= 60) {
             return FRONT_ROW_PRICE;
@@ -93,6 +137,12 @@ public class Cinema {
         }
     }
 
+    /**
+     * prints the statistics of the cinema:
+     *      number of purchased seats
+     *      income based on the purchased seats
+     *      total possible income based on the total number of seats
+     */
     public void printStatistics() {
         int numPurchasedTickets = 0;
         int currentIncome = 0;
