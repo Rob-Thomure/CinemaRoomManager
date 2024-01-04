@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public class Cinema {
     private final int FRONT_ROW_PRICE = 10;
@@ -153,20 +154,14 @@ public class Cinema {
     }
 
     private int getNumPurchasedTickets() {
-        int numPurchasedTickets = 0;
-        for (int i = 0; i < seatingScheme.length; i++) {
-            for (int j = 0; j < seatingScheme[i].length; j++) {
-                if (seatingScheme[i][j] == 'B') {
-                    numPurchasedTickets++;
-                }
-            }
-        }
-        return numPurchasedTickets;
+        return Arrays.stream(seatingScheme).mapToInt(chars -> (int) IntStream
+                .range(0, chars.length)
+                .filter(j -> chars[j] == 'B')
+                .count()).sum();
     }
 
     private int getCurrentIncome() {
         int currentIncome = 0;
-        int maxIncome = calculateMaxIncome();
         for (int i = 0; i < seatingScheme.length; i++) {
             for (int j = 0; j < seatingScheme[i].length; j++) {
                 if (seatingScheme[i][j] == 'B') {
