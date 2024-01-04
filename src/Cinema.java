@@ -144,19 +144,47 @@ public class Cinema {
      *      total possible income based on the total number of seats
      */
     public void printStatistics() {
+        int numPurchasedTickets = getNumPurchasedTickets();
+        int currentIncome = getCurrentIncome();
+        int maxIncome = calculateMaxIncome();
+        double percentagePurchasedTickets = getPercentagePurchasedTickets(numPurchasedTickets);
+        System.out.println(statisticsFormatter(numPurchasedTickets, percentagePurchasedTickets,
+                                                currentIncome, maxIncome));
+    }
+
+    private int getNumPurchasedTickets() {
         int numPurchasedTickets = 0;
+        for (int i = 0; i < seatingScheme.length; i++) {
+            for (int j = 0; j < seatingScheme[i].length; j++) {
+                if (seatingScheme[i][j] == 'B') {
+                    numPurchasedTickets++;
+                }
+            }
+        }
+        return numPurchasedTickets;
+    }
+
+    private int getCurrentIncome() {
         int currentIncome = 0;
         int maxIncome = calculateMaxIncome();
         for (int i = 0; i < seatingScheme.length; i++) {
             for (int j = 0; j < seatingScheme[i].length; j++) {
                 if (seatingScheme[i][j] == 'B') {
-                    numPurchasedTickets++;
                     currentIncome += checkTicketPrice(i + 1);
                 }
             }
         }
-        double percentagePurchasedTickets = (double)numPurchasedTickets / (double)TOTAL_NUM_SEATS * 100;
-        System.out.printf("""
+        return currentIncome;
+    }
+
+
+    private double getPercentagePurchasedTickets(int numPurchasedTickets) {
+        return (double)numPurchasedTickets / (double)TOTAL_NUM_SEATS * 100;
+    }
+
+    private String statisticsFormatter(int numPurchasedTickets, double percentagePurchasedTickets, int currentIncome,
+                                       int maxIncome) {
+        return String.format("""
 
                         Number of purchased tickets: %d
                         Percentage: %.2f%%
@@ -164,7 +192,6 @@ public class Cinema {
                         Total income: $%d
                         """, numPurchasedTickets,
                 percentagePurchasedTickets, currentIncome, maxIncome);
-
     }
 }
 
